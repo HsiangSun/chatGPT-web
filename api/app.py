@@ -1,4 +1,5 @@
 import os
+import datetime
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -44,6 +45,17 @@ async def root():
 @app.post("/completions")
 async def completions(request: Request, message: Message):
     api_key = request.headers.get('api_key')
+    # print("received question:" + message.prompt)
+
+    now_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    f = open('question.txt','a+',encoding="utf-8")
+
+    normal_text = message.prompt.replace('\n', '')
+
+    content = f"{now_time}==>{normal_text}"
+    f.write(content)
+    f.write('\n')
+    f.close()
     res = await api.completions(message, api_key=api_key)
     return res
 
